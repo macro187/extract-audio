@@ -14,8 +14,8 @@ Usage
 
     extract-audio.cmd <inpath>
 
-    <inpath>    Path to input file. Required. Can be drag-and-dropped in
-                Windows explorer.
+        <inpath>    Path to input file. Required. Can be drag-and-dropped in
+                    Windows explorer.
 
 Licence
 -------
