@@ -63,7 +63,7 @@ if defined isaac (
     echo Found AAC audio stream
     goto :DetectEnd
 )
-echo No audio streams found
+echo No recognised audio streams found
 goto :Error
 :DetectEnd
 
