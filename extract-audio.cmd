@@ -8,21 +8,45 @@ type "%here%readme.md"
 echo.
 
 
+set "rcpath=%userprofile%\_extract-audio-config.cmd"
+if exist "%rcpath%" (
+    echo.
+    echo ===^> Sourcing %rcpath%
+    call "%rcpath%"
+)
+
+
 echo.
 echo ===^> Locating tools
-set ffmpeg=%ProgramFiles%\ffmpeg\bin\ffmpeg.exe
+if not defined ffmpeg (
+    set ffmpeg=%ProgramFiles%\ffmpeg\bin\ffmpeg.exe
+)
 if not exist "%ffmpeg%" (
     echo ffmpeg not found
     goto :Error
 )
 echo ffmpeg = "%ffmpeg%"
 
-set ffprobe=%ProgramFiles%\ffmpeg\bin\ffprobe.exe
+if not defined ffprobe (
+    set ffprobe=%ProgramFiles%\ffmpeg\bin\ffprobe.exe
+)
 if not exist "%ffprobe%" (
     echo ===^> ffprobe not found
     goto :Error
 )
 echo ffprobe = "%ffprobe%"
+
+
+echo.
+echo ===^> Locating output directory
+if not defined outdir (
+    set "outdir=%userprofile%\Music"
+)
+echo outdir = "%outdir%"
+if not exist "%outdir%" (
+    echo outdir not found
+    goto :Error
+)
 
 
 echo.
@@ -71,10 +95,10 @@ goto :Error
 echo.
 echo ===^> Determining full output path
 if defined isaac (
-set "outpath=%userprofile%\Music\%outfilebase%.m4a"
+set "outpath=%outdir%\%outfilebase%.m4a"
 goto :OutPathEnd
 )
-set "outpath=%userprofile%\Music\%outfilebase%.mp3"
+set "outpath=%outdir%\%outfilebase%.mp3"
 :OutPathEnd
 echo outpath = "%outpath%"
 if exist "%outpath%" (

@@ -1,13 +1,13 @@
 extract-audio.cmd
 =================
 
-    Extract audio to an .mp3 file in your Music\ folder, reencoding if
+    Extract audio to an .mp3 or .m4a file in your Music\ folder, reencoding if
     necessary
 
 Prerequisites
 -------------
 
-    Requires ffmpeg installed in C:\Program Files\ffmpeg\.
+    ffmpeg
 
 Usage
 -----
@@ -16,6 +16,36 @@ Usage
 
         <inpath>    Path to input file. Required. Can be drag-and-dropped in
                     Windows explorer.
+
+Config File
+-----------
+
+    %userprofile%\_extract-audio-config.cmd
+
+        <outdir>    Full path to directory to place output files in (no
+                    trailing backslash)
+
+                    Default:
+                    %userprofile%\Music
+
+                    Example:
+                    set "outdir=path\to\output\directory"
+
+        <ffmpeg>    Full path to ffmpeg.exe
+
+                    Default:
+                    %ProgramFiles%\ffmpeg\bin\ffmpeg.exe
+
+                    Example:
+                    set "ffmpeg=path\to\ffmpeg.exe"
+
+        <ffprobe>   Full path to ffprobe.exe
+
+                    Default:
+                    %ProgramFiles%\ffmpeg\bin\ffprobe.exe
+
+                    Example:
+                    set "ffprobe=path\to\ffprobe.exe"
 
 Licence
 -------
@@ -28,8 +58,8 @@ Licence
 
     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
     WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-    SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
     WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
     IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
