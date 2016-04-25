@@ -107,8 +107,8 @@ goto :Error
 echo.
 echo ===^> Determining full output path
 if defined isaac (
-set "outpath=%outdir%\%outfilebase%.m4a"
-goto :OutPathEnd
+    set "outpath=%outdir%\%outfilebase%.m4a"
+    goto :OutPathEnd
 )
 set "outpath=%outdir%\%outfilebase%.mp3"
 :OutPathEnd
