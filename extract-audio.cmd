@@ -119,6 +119,10 @@ if defined isopus (
     set "outpath=%outdir%\%outfilebase%.mka"
     goto :OutPathEnd
 )
+if defined isvorbis (
+    set "outpath=%outdir%\%outfilebase%.oga"
+    goto :OutPathEnd
+)
 set convert=Y
 set "outpath=%outdir%\%outfilebase%.mp3"
 :OutPathEnd
