@@ -70,6 +70,7 @@ echo ===^> Examining audio streams in input file
 set ismp3=
 set isaac=
 set isopus=
+set isvorbis=
 set "inpathtmp=%inpath%"
 set "inpathtmp=%inpathtmp:)=^)%"
 set "inpathtmp=%inpathtmp:&=^&%"
@@ -80,6 +81,7 @@ if "%%i"=="codec_name" echo %%i=%%j
 if "%%i=%%j"=="codec_name=mp3" set ismp3=1
 if "%%i=%%j"=="codec_name=aac" set isaac=1
 if "%%i=%%j"=="codec_name=opus" set isopus=1
+if "%%i=%%j"=="codec_name=vorbis" set isvorbis=1
 )
 if defined ismp3 (
     echo Found MP3 audio stream
@@ -91,6 +93,10 @@ if defined isaac (
 )
 if defined isopus (
     echo Found OPUS audio stream
+    goto :DetectEnd
+)
+if defined isvorbis (
+    echo Found Vorbis audio stream
     goto :DetectEnd
 )
 echo No recognised audio streams found
