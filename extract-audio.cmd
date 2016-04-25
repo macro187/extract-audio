@@ -106,12 +106,15 @@ goto :Error
 
 echo.
 echo ===^> Determining full output path
+set "convert="
 if defined isaac (
     set "outpath=%outdir%\%outfilebase%.m4a"
     goto :OutPathEnd
 )
+set convert=Y
 set "outpath=%outdir%\%outfilebase%.mp3"
 :OutPathEnd
+echo convert = "%convert%"
 echo outpath = "%outpath%"
 if exist "%outpath%" (
     echo outpath "%outpath%" already exists
@@ -119,21 +122,9 @@ if exist "%outpath%" (
 )
 
 
-if defined ismp3 (
+if not defined convert (
     echo.
-    echo ===^> Extracting MP3 audio
-    echo on
-    "%ffmpeg%" -loglevel 1 -stats -i "%inpath%" -map_metadata 0 -vn -acodec copy "%outpath%"
-    @echo.
-    @if %errorlevel% neq 0 goto :Error
-    @echo off
-    goto :End
-)
-
-
-if defined isaac (
-    echo.
-    echo ===^> Extracting AAC audio
+    echo ===^> Extracting audio stream
     echo on
     "%ffmpeg%" -loglevel 1 -stats -i "%inpath%" -map_metadata 0 -vn -acodec copy "%outpath%"
     @echo.
@@ -144,12 +135,13 @@ if defined isaac (
 
 
 echo.
-echo ===^> Extracting and converting audio to MP3
+echo ===^> Extracting and converting audio stream
 echo on
 "%ffmpeg%" -loglevel 1 -stats -i "%inpath%" -vn -map_metadata 0 -f mp3 -ar 44100 -ac 2 -q:a 1 "%outpath%"
 @echo.
 @if %errorlevel% neq 0 goto :Error
 @echo off
+goto :End
 
 
 :End
