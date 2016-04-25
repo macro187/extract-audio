@@ -115,6 +115,10 @@ if defined isaac (
     set "outpath=%outdir%\%outfilebase%.m4a"
     goto :OutPathEnd
 )
+if defined isopus (
+    set "outpath=%outdir%\%outfilebase%.mka"
+    goto :OutPathEnd
+)
 set convert=Y
 set "outpath=%outdir%\%outfilebase%.mp3"
 :OutPathEnd
