@@ -107,6 +107,10 @@ goto :Error
 echo.
 echo ===^> Determining full output path
 set "convert="
+if defined ismp3 (
+    set "outpath=%outdir%\%outfilebase%.mp3"
+    goto :OutPathEnd
+)
 if defined isaac (
     set "outpath=%outdir%\%outfilebase%.m4a"
     goto :OutPathEnd
