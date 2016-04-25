@@ -1,8 +1,8 @@
 extract-audio.cmd
 =================
 
-    Extract audio to an .mp3 or .m4a file in your Music\ folder, reencoding if
-    necessary
+    Extract (and, if necessary, convert) audio streams to an appropriate audio
+    file format in your Music\ folder
 
 Prerequisites
 -------------
