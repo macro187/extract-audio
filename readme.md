@@ -4,11 +4,6 @@ extract-audio.cmd
     Extract (and, if necessary, convert) audio streams to an appropriate audio
     file format in your Music\ folder
 
-Prerequisites
--------------
-
-    ffmpeg
-
 Usage
 -----
 
@@ -16,6 +11,20 @@ Usage
 
         <inpath>    Path to input file. Required. Can be drag-and-dropped in
                     Windows explorer.
+
+Description
+-----------
+
+    If <inpath> is in the output directory, special "in-place" behaviour takes
+    effect where "original" versions of all processed files are maintained under
+    double-underscore-prefixed names.  Attempts to reprocess files are
+    transparently reprocessed from the "original" versions.  Once the user deems
+    the output files satisfactory, the "originals" can be deleted.
+
+Prerequisites
+-------------
+
+    ffmpeg
 
 Config File
 -----------
@@ -50,7 +59,7 @@ Config File
 Licence
 -------
 
-    Copyright (c) 2015 Ron MacNeil
+    Copyright (c) 2015-2016 Ron MacNeil
 
     Permission to use, copy, modify, and/or distribute this software for any
     purpose with or without fee is hereby granted, provided that the above

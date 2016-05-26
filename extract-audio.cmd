@@ -8,6 +8,12 @@ type "%here%readme.md"
 echo.
 
 
+if "%~1"=="" (
+    echo No ^<inpath^> specified
+    goto :Error
+)
+
+
 set "rcpath=%userprofile%\_extract-audio-config.cmd"
 if exist "%rcpath%" (
     echo.
@@ -38,35 +44,98 @@ echo ffprobe = "%ffprobe%"
 
 
 echo.
-echo ===^> Locating output directory
+echo ===^> Locating outdir
 if not defined outdir (
     set "outdir=%userprofile%\Music"
 )
-echo outdir = "%outdir%"
 if not exist "%outdir%" (
-    echo outdir not found
+    echo outdir "%outdir%" not found
     goto :Error
 )
+echo on
+pushd "%outdir%"
+@if %errorlevel% neq 0 goto :Error
+@set "outdir=%cd%"
+popd
+@echo off
+echo outdir = "%outdir%"
+
+
+echo.
+echo ===^> Locating indir
+set "indir=%~dp1"
+if not defined indir (
+    set "indir=%cd%"
+    goto :InDirEnd
+)
+echo on
+pushd "%indir%"
+@if %errorlevel% neq 0 goto :Error
+@set "indir=%cd%"
+popd
+@echo off
+:InDirEnd
+echo indir = "%indir%"
 
 
 echo.
 echo ===^> Examining ^<inpath^>
-set "inpath=%~1"
-if not defined inpath (
-    echo No ^<inpath^> specified
+set "infilebase=%~n1"
+if "%infilebase%"=="" (
+    echo No file in ^<inpath^> "%~1"
     goto :Error
 )
-if not exist "%inpath%" (
-    echo ^<inpath^> "%inpath%" not found
-    goto :Error
-)
-for /f "usebackq delims=" %%i in ('"%inpath%"') do @set "outfilebase=%%~ni"
+set "infile=%~nx1"
+set "inpath=%indir%\%infile%"
 echo ^<inpath^> = "%inpath%"
-echo outfilebase = "%outfilebase%"
+echo infilebase = "%infilebase%"
+echo infile = "%infile%"
+
+
+if /i not "%indir%"=="%outdir%" goto :InPlaceEnd
+
+echo.
+echo ===^> Looking for original
+set "origpathbase=%indir%\__%infilebase%"
+set "origpath="
+echo on
+for /f "delims=" %%i in ('dir /b "%origpathbase%.*"') do set "origpath=%%i"
+@echo off
+if not defined origpath set "origpath=%indir%\__%infile%"
+echo origpathbase = "%origpathbase%"
+echo origpath = "%origpath%"
+
+
+if exist "%origpath%" goto :KeepOrigEnd
+echo.
+echo ===^> No original found, keeping ^<inpath^> as original
+echo on
+move "%inpath%" "%origpath%"
+@if %errorlevel% neq 0 goto :Error
+@echo off
+:KeepOrigEnd
+
+
+if not exist "%inpath%" goto :DeleteInpathEnd
+echo.
+echo ===^> Removing existing ^<inpath^>
+echo on
+del /f /q "%inpath%"
+@if %errorlevel% neq 0 goto :Error
+@echo off
+:DeleteInpathEnd
 
 
 echo.
-echo ===^> Examining audio streams in input file
+echo ===^> Switching ^<inpath^> to original
+set "inpath=%origpath%"
+echo inpath = "%inpath%"
+
+:InPlaceEnd
+
+
+echo.
+echo ===^> Examining audio streams in ^<inpath^>
 set ismp3=
 set isaac=
 set isopus=
@@ -105,52 +174,54 @@ goto :Error
 
 
 echo.
-echo ===^> Determining full output path
+echo ===^> Determining outpath based on audio stream
 set "convert="
 if defined ismp3 (
-    set "outpath=%outdir%\%outfilebase%.mp3"
+    set "outpath=%outdir%\%infilebase%.mp3"
     goto :OutPathEnd
 )
 if defined isaac (
-    set "outpath=%outdir%\%outfilebase%.m4a"
+    set "outpath=%outdir%\%infilebase%.m4a"
     goto :OutPathEnd
 )
 if defined isopus (
-    set "outpath=%outdir%\%outfilebase%.mka"
+    set "outpath=%outdir%\%infilebase%.mka"
     goto :OutPathEnd
 )
 if defined isvorbis (
-    set "outpath=%outdir%\%outfilebase%.oga"
+    set "outpath=%outdir%\%infilebase%.oga"
     goto :OutPathEnd
 )
 set convert=Y
-set "outpath=%outdir%\%outfilebase%.mp3"
+set "outpath=%outdir%\%infilebase%.mp3"
 :OutPathEnd
 echo convert = "%convert%"
 echo outpath = "%outpath%"
+
+
+echo.
+echo ===^> Making sure outpath doesn't already exist
 if exist "%outpath%" (
     echo outpath "%outpath%" already exists
     goto :Error
 )
 
 
-if not defined convert (
-    echo.
-    echo ===^> Extracting audio stream
-    echo on
-    "%ffmpeg%" -loglevel 1 -stats -i "%inpath%" -map_metadata 0 -vn -acodec copy "%outpath%"
-    @echo.
-    @if %errorlevel% neq 0 goto :Error
-    @echo off
-    goto :End
-)
+if defined convert goto :ExtractEnd
+echo.
+echo ===^> Extracting audio stream
+echo on
+"%ffmpeg%" -loglevel 1 -stats -i "%inpath%" -map_metadata 0 -vn -acodec copy "%outpath%"
+@if %errorlevel% neq 0 goto :Error
+@echo off
+goto :End
+:ExtractEnd
 
 
 echo.
 echo ===^> Extracting and converting audio stream
 echo on
 "%ffmpeg%" -loglevel 1 -stats -i "%inpath%" -vn -map_metadata 0 -f mp3 -ar 44100 -ac 2 -q:a 1 "%outpath%"
-@echo.
 @if %errorlevel% neq 0 goto :Error
 @echo off
 goto :End
