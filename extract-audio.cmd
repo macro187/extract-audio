@@ -52,12 +52,14 @@ if not exist "%outdir%" (
     echo outdir "%outdir%" not found
     goto :Error
 )
+if /i "%outdir:~0,2%"=="\\" goto :OutDirEnd
 echo on
 pushd "%outdir%"
 @if %errorlevel% neq 0 goto :Error
 @set "outdir=%cd%"
 popd
 @echo off
+:OutDirEnd
 echo outdir = "%outdir%"
 
 
@@ -68,6 +70,7 @@ if not defined indir (
     set "indir=%cd%"
     goto :InDirEnd
 )
+if /i "%indir:~0,2%"=="\\" goto :InDirEnd
 echo on
 pushd "%indir%"
 @if %errorlevel% neq 0 goto :Error
